@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Bases Numéricas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f4f4f4;
+            color: #333;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .explicacao {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Conversor de Bases</h1>
+    <form method="post">
+        <input type="text" name="numero" placeholder="Digite o número" required>
+        <select name="baseOrigem" required>
+            <option value="">Selecione a base de origem</option>
+            <option value="decimal">Decimal</option>
+            <option value="binario">Binário</option>
+            <option value="octal">Octal</option>
+            <option value="hexadecimal">Hexadecimal</option>
+        </select>
+        <select name="baseDestino" required>
+            <option value="">Selecione a base de destino</option>
+            <option value="decimal">Decimal</option>
+            <option value="binario">Binário</option>
+            <option value="octal">Octal</option>
+            <option value="hexadecimal">Hexadecimal</option>
+        </select>
+        <button type="submit">Converter</button>
+    </form>
+
+    <?php
+    function converter($numero, $baseOrigem, $baseDestino) {
+        switch ($baseOrigem) {
+            case 'decimal':
+                $decimal = $numero;
+                break;
+            case 'binario':
+                $decimal = bindec($numero);
+                break;
+            case 'octal':
+                $decimal = octdec($numero);
+                break;
+            case 'hexadecimal':
+                $decimal = hexdec($numero);
+                break;
+            default:
+                return "Base de origem inválida.";
+        }
+
+        switch ($baseDestino) {
+            case 'decimal':
+                return $decimal;
+            case 'binario':
+                return decbin($decimal);
+            case 'octal':
+                return decoct($decimal);
+            case 'hexadecimal':
+                return strtoupper(dechex($decimal));
+            default:
+                return "Base de destino inválida.";
+        }
+    }
+
+    $resultado = null;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $numero = trim($_POST['numero']);
+        $baseOrigem = $_POST['baseOrigem'];
+        $baseDestino = $_POST['baseDestino'];
+        $resultado = converter($numero, $baseOrigem, $baseDestino);
+    }
+    ?>
+
+    <?php if ($resultado !== null): ?>
+        <h2>Resultado: <?php echo $resultado; ?></h2>
+    <?php endif; ?>
+
+    <div class="explicacao">
+        <h2>Explicações de Conversão</h2>
+        <p><strong>Decimal para Binário:</strong> Divida o número decimal sucessivamente por 2, anotando o resto de cada divisão. O número binário será formado pelos restos de baixo para cima.</p>
+        <p><strong>Binário para Decimal:</strong> Multiplique cada dígito do número binário pelo valor da potência de 2 correspondente, da direita para a esquerda, e some os resultados.</p>
+        <p><strong>Decimal para Octal:</strong> Divida o número decimal sucessivamente por 8, anotando o resto de cada divisão. O número octal será formado pelos restos de baixo para cima.</p>
+        <p><strong>Octal para Decimal:</strong> Multiplique cada dígito do número octal pelo valor da potência de 8 correspondente, da direita para a esquerda, e some os resultados.</p>
+        <p><strong>Decimal para Hexadecimal:</strong> Divida o número decimal sucessivamente por 16, anotando o resto de cada divisão. Os restos são convertidos para os dígitos hexadecimais correspondentes (0-9, A-F).</p>
+        <p><strong>Hexadecimal para Decimal:</strong> Multiplique cada dígito hexadecimal pelo valor da potência de 16 correspondente, da direita para a esquerda, e some os resultados.</p>
+        <p><strong>Binário para Octal ou Hexadecimal:</strong> Primeiro, converta o número binário para decimal e depois de decimal para octal ou hexadecimal, conforme necessário.</p>
+    </div>
+</body>
+</html>
